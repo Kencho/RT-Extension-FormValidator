@@ -7,4 +7,7 @@ RTx 'RT-Extension-FormValidator';
 
 requires_rt '4.4.0';
 
+requires 'JSON';
+requires 'Try::Tiny';
+
 WriteAll();
