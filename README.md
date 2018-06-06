@@ -9,6 +9,7 @@ Run the following commands:
 ```bash
 perl Makefile.PL
 make
+make test # Optional. Runs the extension tests.
 make install
 ```
 
