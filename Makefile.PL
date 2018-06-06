@@ -14,6 +14,7 @@ requires 'JSON';
 requires 'Try::Tiny';
 
 test_requires 'Test::More';
+test_requires 'Devel::Cover';
 
 WriteAll();
 
