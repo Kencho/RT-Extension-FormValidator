@@ -67,16 +67,6 @@ B<Note>
 
 This ensures that this class won't be constructed itself. Instead, users must instantiate its subclasses directly.
 
-B<Parameters>
-
-=over 1
-
-=item C<%args>
-
-A hashmap of arguments for the context. This is specific for every subclass.
-
-=back
-
 =cut
 
 sub new {
@@ -85,20 +75,44 @@ sub new {
 
 =pod
 
-=head3 _Init()
+=head3 _Init(%args)
 
 Initialization method.
 
 B<Note>
 
-Don't override, as it initializes internal attributes. Instead, call it from the subclasses initializers using C<$self-E<gt>SUPER::_Init()>
+Don't override, as it initializes internal attributes. Instead, call it from the subclasses initializers using C<$self-E<gt>SUPER::_Init(%args)>
+
+B<Parameters>
+
+=over 1
+
+=item C<%args>
+
+A hashmap of arguments for the context. This is specific for every subclass.
+
+Possibly used values are:
+
+=over 2
+
+=item C<inverted> (boolean)
+
+If defined, will set the initial state of the C<Inverted> flag.
+
+=back
+
+=back
 
 =cut
 
 sub _Init {
     my $self = shift;
+    my %args = (
+        inverted => 0, 
+        @_,
+    );
 
-    $self->SetInverted(0);
+    $self->SetInverted($args{inverted});
 
     return;
 }
