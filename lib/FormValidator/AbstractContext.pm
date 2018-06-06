@@ -21,6 +21,44 @@ use warnings;
 
 =pod
 
+=head3 I<static> Build($class, %args)
+
+Creates a new context using reflection.
+
+B<Note>
+
+This is an static method. Call it using the class itself, not an instance (i.e., C<my $context = FormValidator::AbstractContext::Build('My::Context::Class', {queue_id =E<gt> 345});>)
+
+B<Parameters>
+
+=over 1
+
+=item C<$class>
+
+The fully qualified name of the class to instantiate.
+
+=item C<%args>
+
+The arguments to pass to the concrete context class constructor.
+
+=back
+
+=cut
+
+sub Build {
+    my $class = shift;
+    my %args = (@_);
+
+    my $context = $class->new(%args);
+    if (!$context->isa(__PACKAGE__)) {
+        die "The given class $class isn't a subclass of " . __PACKAGE__ . "\n";
+    }
+
+    return $context;
+}
+
+=pod
+
 =head3 new(%args)
 
 The abstract constructor.
