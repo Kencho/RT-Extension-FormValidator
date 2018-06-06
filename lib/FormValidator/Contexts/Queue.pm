@@ -62,11 +62,14 @@ sub new {
 sub _Init {
     my $self = shift;
     my %args = (
-        queue_id => undef, 
         @_, 
     );
 
     $self->SUPER::_Init(%args);
+
+    if (!defined($args{queue_id})) {
+        die "A defined queue id was expected in the parameter queue_id.\n";
+    }
 
     $self->{queue_id} = $args{queue_id};
 
