@@ -36,6 +36,32 @@ sub test_construction {
     return;
 }
 
+sub test_reflective_construction {
+    try {
+        FormValidator::AbstractContext::Build('FormValidator::Contexts::Queue');
+        fail('An exception was expected when trying to construct without a queue id');
+    }
+    catch {
+        pass('Exception captured when trying to construct without a queue id');
+    };
+
+    try {
+        FormValidator::AbstractContext::Build('FormValidator::Contexts::Queue', queue_id => undef);
+        fail('An exception was expected when trying to construct with an undefined queue id');
+    }
+    catch {
+        pass('Exception captured when trying to construct without an undefined queue id');
+    };
+
+    my $queue_context = FormValidator::AbstractContext::Build('FormValidator::Contexts::Queue', queue_id => 235);
+
+    isa_ok($queue_context, 'FormValidator::AbstractContext');
+    isa_ok($queue_context, 'FormValidator::Contexts::Queue');
+    is($queue_context->Inverted(), 0, 'Not inverted by default');
+
+    return;
+}
+
 sub test_parameterless_check {
     my $queue_context = FormValidator::Contexts::Queue->new(queue_id => 235);
 
@@ -105,6 +131,7 @@ sub test_inverted_id_names {
 
 subtest 'Construction' => sub {
     test_construction();
+    test_reflective_construction();
 
     done_testing();
 };
