@@ -4,16 +4,55 @@ use strict;
 use warnings;
 
 use Test::More;
+use Devel::Cover;
+use Try::Tiny;
 
 require_ok('FormValidator::AbstractContext');
 require_ok('FormValidator::Contexts::Queue');
 
 sub test_construction {
+    try {
+        FormValidator::Contexts::Queue->new();
+        fail('An exception was expected when trying to construct without a queue id');
+    }
+    catch {
+        pass('Exception captured when trying to construct without a queue id');
+    };
+
+    try {
+        FormValidator::Contexts::Queue->new(queue_id => undef);
+        fail('An exception was expected when trying to construct with an undefined queue id');
+    }
+    catch {
+        pass('Exception captured when trying to construct without an undefined queue id');
+    };
+
     my $queue_context = FormValidator::Contexts::Queue->new(queue_id => 235);
 
     isa_ok($queue_context, 'FormValidator::AbstractContext');
     isa_ok($queue_context, 'FormValidator::Contexts::Queue');
     is($queue_context->Inverted(), 0, 'Not inverted by default');
+
+    return;
+}
+
+sub test_parameterless_check {
+    my $queue_context = FormValidator::Contexts::Queue->new(queue_id => 235);
+
+    try {
+        $queue_context->Check();
+        fail('An exception was expected when checking without a queue_id argument');
+    }
+    catch {
+        pass('Exception captured when checking without a queue_id argument');
+    };
+    try {
+        $queue_context->Check(queue_id => undef);
+        fail('An exception was expected when checking with an undefined queue_id argument');
+    }
+    catch {
+        pass('Exception captured when checking with an undefined queue_id argument');
+    };
 
     return;
 }
@@ -66,6 +105,12 @@ sub test_inverted_id_names {
 
 subtest 'Construction' => sub {
     test_construction();
+
+    done_testing();
+};
+
+subtest 'Parameterless checking' => sub {
+    test_parameterless_check();
 
     done_testing();
 };
