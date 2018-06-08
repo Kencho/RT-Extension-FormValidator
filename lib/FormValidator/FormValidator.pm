@@ -19,6 +19,8 @@ use Try::Tiny;
 
 use RT::Config;
 
+use FormValidator::AbstractContext;
+
 =pod
 
 =head2 Methods
@@ -199,25 +201,133 @@ sub _LoadRulesFromFile {
     };
     close($file_handle) or die "Unable to close $rules_file: $OS_ERROR\n";
 
-    my $data;
+    my $rules_data;
     try {
-        $data = JSON->new()->decode($file_contents);
+        $rules_data = JSON->new()->decode($file_contents);
     }
     catch {
         RT::Logger->warning(__PACKAGE__ . "::_LoadRulesFromFile: $rules_file is not a valid JSON file. Reason: $_");
     };
 
-    if (defined $data) {
-        # TODO: Validate the data correctness and construct the objects, instead of returning the base data.
+    if (defined $rules_data) {
+        RT::Logger->debug(__PACKAGE__ . "::_LoadRulesFromFile: Data read from $rules_file: " . Data::Dumper::Dumper($rules_data));
 
-        if (ref $data eq 'ARRAY') {
-            return @{$data};
+        my @rules_data;
+        if (ref $rules_data eq 'ARRAY') {
+            @rules_data = @{$rules_data};
+        }
+        else {
+            @rules_data = ($rules_data);
         }
 
-        return $data;
+        my @rules;
+
+        foreach my $rule_data_ref (@rules_data) {
+            my %rule;
+
+            # Contexts
+            my @contexts;
+            if (exists $rule_data_ref->{contexts}) {
+                push @contexts, $self->_BuildContextsFromData($rule_data_ref->{contexts});
+            }
+            else {
+                push @contexts, (FormValidator::Contexts::Universal->new());
+            }
+            $rule{contexts} = \@contexts;
+
+            push @rules, {%rule};
+        }
+
+        RT::Logger->debug(__PACKAGE__ . "::_LoadRulesFromFile: Rules: " . Data::Dumper::Dumper(\@rules));
+
+        return @rules;
     }
 
     return;
+}
+
+=pod
+
+=head3 _BuildContextsFromData($contexts_data_ref)
+
+Builds an array of context objects from data (e.g., loaded from the configuration files).
+
+B<Note>
+
+Internal function. Do not use from outside of this module.
+
+B<Parameters>
+
+=over 1
+
+=item C<$contexts_data_ref> (arrayref|hashref)
+
+The data to build one (i.e. hashref) or several (i.e. arrayref) contexts.
+
+=back
+
+B<Returns>
+
+An array of contexts created using the data.
+
+=cut
+
+sub _BuildContextsFromData {
+    my $self = shift;
+    my $contexts_data_ref = shift;
+
+    my @contexts;
+
+    my @contexts_data;
+    if (ref $contexts_data_ref eq 'ARRAY') {
+        @contexts_data = @{$contexts_data_ref};
+    }
+    else {
+        @contexts_data = ($contexts_data_ref);
+    }
+
+    foreach my $context_data_ref (@contexts_data) {
+        push @contexts, $self->_BuildContextFromData($context_data_ref);
+    }
+
+    return @contexts;
+}
+
+=pod
+
+=head3 _BuildContextFromData($context_data_ref)
+
+Builds a context object from data (e.g., loaded from the configuration files).
+
+B<Note>
+
+Internal function. Do not use from outside of this module.
+
+B<Parameters>
+
+=over 1
+
+=item C<$context_data_ref> (hashref)
+
+The data to build a single context.
+
+=back
+
+B<Returns>
+
+A context object created using the data.
+
+=cut
+
+sub _BuildContextFromData {
+    my $self = shift;
+    my $context_data_ref = shift;
+
+    if (!exists $context_data_ref->{class}) {
+        die "A 'class' attribute is required to instantiate a context.\n" . Data::Dumper::Dumper($context_data_ref) . "\n";
+    }
+
+    return FormValidator::AbstractContext::Build($context_data_ref->{class}, %{$context_data_ref->{args}});
 }
 
 1;

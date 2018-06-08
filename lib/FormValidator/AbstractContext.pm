@@ -13,6 +13,8 @@ package FormValidator::AbstractContext;
 use strict;
 use warnings;
 
+use Module::Load;
+
 =pod
 
 =head2 Methods
@@ -48,6 +50,8 @@ The arguments to pass to the concrete context class constructor.
 sub Build {
     my $class = shift;
     my %args = (@_);
+
+    load($class);
 
     my $context = $class->new(%args);
     if (!$context->isa(__PACKAGE__)) {
