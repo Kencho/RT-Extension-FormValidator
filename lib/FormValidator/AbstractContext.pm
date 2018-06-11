@@ -179,7 +179,7 @@ sub Check {
 
 =pod
 
-=head3 Check(%args)
+=head3 _Check(%args)
 
 The actual verification method, called internally by C<Init>.
 

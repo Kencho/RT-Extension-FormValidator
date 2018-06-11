@@ -64,7 +64,7 @@ sub _Init {
 
 =head3 _Check(%args)
 
-Checks that the context queue requirements are met.
+Checks that the context requirements are met.
 
 B<Returns>
 
