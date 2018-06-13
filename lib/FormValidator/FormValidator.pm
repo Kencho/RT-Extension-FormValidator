@@ -20,6 +20,7 @@ use Try::Tiny;
 use RT::Config;
 
 use FormValidator::AbstractContext;
+use FormValidator::AbstractCondition;
 
 =pod
 
@@ -323,6 +324,14 @@ sub _LoadRulesFromFile {
             }
             $rule{contexts} = \@contexts;
 
+            # Condition
+            if (exists $rule_data_ref->{condition}) {
+                $rule{condition} = $self->_BuildConditionFromData($rule_data_ref->{condition});
+            }
+            else {
+                $rule{condition} = FormValidator::AbstractCondition::Build('FormValidator::Conditions::Always');
+            }
+
             push @rules, {%rule};
         }
 
@@ -416,6 +425,43 @@ sub _BuildContextFromData {
     }
 
     return FormValidator::AbstractContext::Build($context_data_ref->{class}, %{$context_data_ref->{args}});
+}
+
+=pod
+
+=head3 _BuildConditionFromData($condition_data_ref)
+
+Builds a condition object from data (e.g., loaded from the configuration files).
+
+B<Note>
+
+Internal function. Do not use from outside of this module.
+
+B<Parameters>
+
+=over 1
+
+=item C<$condition_data_ref> (hashref)
+
+The data to build a single condition.
+
+=back
+
+B<Returns>
+
+A condition object created using the data.
+
+=cut
+
+sub _BuildConditionFromData {
+    my $self = shift;
+    my $condition_data_ref = shift;
+
+    if (!exists $condition_data_ref->{class}) {
+        die "A 'class' attribute is required to instantiate a condition.\n" . Data::Dumper::Dumper($condition_data_ref) . "\n";
+    }
+
+    return FormValidator::AbstractCondition::Build($condition_data_ref->{class}, %{$condition_data_ref->{args}});
 }
 
 1;
