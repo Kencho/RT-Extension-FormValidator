@@ -194,7 +194,15 @@ sub _ValidateWithRule {
 
     RT::Logger->debug(__PACKAGE__ . "::_ValidateWithRule: Rule applies: " . Data::Dumper::Dumper($rule));
 
-    # TODO: Implement the actual validation logic.
+    my $condition = $rule->{condition};
+    foreach my $field_name (keys %{$form_data}) {
+        if ($condition->Check(
+            field_name => $field_name, 
+        )) {
+            RT::Logger->debug(__PACKAGE__ . "::_ValidateWithRule: Rule matches condition for field '$field_name' with value '" . $form_data->{$field_name} . "'. Rule: " . Data::Dumper::Dumper($rule));
+            # TODO: Implement the actual validation logic.
+        }
+    }
 
     return ($result, $message);
 }
