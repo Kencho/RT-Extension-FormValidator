@@ -4,7 +4,7 @@
 
 FormValidator::Conditions::Always
 
-A simple context class for the universal context.
+A simple condition class that always passes.
 
 A subclass of C<FormValidator::AbstractContext>
 
