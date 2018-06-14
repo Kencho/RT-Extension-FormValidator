@@ -17,6 +17,8 @@ use warnings;
 
 use parent 'FormValidator::AbstractCondition';
 
+use FormValidator::FieldSelector;
+
 =pod
 
 =head2 Methods
@@ -123,8 +125,7 @@ sub _Init {
 
     $self->SUPER::_Init(%args);
 
-    $self->{field_name_regex} = $args{field_name_regex};
-    $self->{field_name} = $args{field_name};
+    $self->{field_selector} = FormValidator::FieldSelector->new(%args);
 
     return;
 }
@@ -169,17 +170,7 @@ sub _Check {
 
     my $field_name = $args{field_name};
 
-    if (defined $self->{field_name_regex}) {
-        my $regex = $self->{field_name_regex};
-        if ($field_name !~ m{$regex}) {
-            return 0;
-        }
-    }
-    elsif ($field_name ne $self->{field_name}) {    # We can assume $self->{field_name} exists since construction
-        return 0;
-    }
-
-    return 1;
+    return $self->{field_selector}->Matches($field_name);
 }
 
 1;
