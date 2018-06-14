@@ -31,7 +31,6 @@ sub test_construction {
 
     isa_ok($field_condition, 'FormValidator::AbstractCondition');
     isa_ok($field_condition, 'FormValidator::Conditions::Field');
-    is($field_condition->Inverted(), 0, 'Not inverted by default');
 
     return;
 }
@@ -57,7 +56,6 @@ sub test_reflective_construction {
 
     isa_ok($field_condition, 'FormValidator::AbstractCondition');
     isa_ok($field_condition, 'FormValidator::Conditions::Field');
-    is($field_condition->Inverted(), 0, 'Not inverted by default');
 
     return;
 }

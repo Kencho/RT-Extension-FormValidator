@@ -132,7 +132,7 @@ sub _Init {
 
 =pod
 
-=head3 _Check(%args)
+=head3 Check(%args)
 
 Checks that the condition requirements are met.
 
@@ -158,11 +158,11 @@ The field name. The criteria is met if (aside from meeting the subclass' criteri
 
 B<Returns>
 
-C<0> when the field name doesn't match the criteria. C<1> when the field name matches the criteria B<and> the subclass' criteria as well. May be inverted.
+C<0> when the field name doesn't match the criteria. C<1> when the field name matches the criteria B<and> the subclass' criteria as well.
 
 =cut
 
-sub _Check {
+sub Check {
     my $self = shift;
     my %args = (
         @_, 

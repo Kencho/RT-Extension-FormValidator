@@ -95,16 +95,6 @@ B<Parameters>
 
 A hashmap of arguments for the condition. This is specific for every subclass.
 
-Possibly used values are:
-
-=over 2
-
-=item C<inverted> (boolean)
-
-If defined, will set the initial state of the C<Inverted> flag.
-
-=back
-
 =back
 
 =cut
@@ -112,79 +102,17 @@ If defined, will set the initial state of the C<Inverted> flag.
 sub _Init {
     my $self = shift;
     my %args = (
-        inverted => 0, 
         @_,
     );
-
-    $self->SetInverted($args{inverted});
 
     return;
 }
 
 =pod
 
-=head3 Check(%args)
-
-Checks that the condition requirements are met.
-
-B<Note>
-
-Don't override this method, as it does some common operations. Override C<_Init> instead.
-
-B<Parameters>
-
-=over 1
-
-=item C<%args>
-
-A hashmap of arguments that are expected to meet the context criteria.
-
-Expected keys are: 
-
-=over 2
-
-=item C<field_name> (string)
-
-The name of the field being checked.
-
-=item C<field_value> (scalar)
-
-The value of the field being checked.
-
-=back
-
-=back
-
-B<Returns>
-
-C<1> if the arguments meet the context criteria, C<0> if they don't.
-
-=cut
-
-sub Check {
-    my $self = shift;
-    my %args = (
-        @_, 
-    );
-
-    my $result = $self->_Check(%args);
-    if ($self->Inverted()) {
-        if ($result) {
-            $result = 0;
-        }
-        else {
-            $result = 1;
-        }
-    }
-
-    return $result;
-}
-
-=pod
-
 =head3 _Check(%args)
 
-The actual verification method, called internally by C<Init>.
+The verification method.
 
 B<Note>
 
@@ -198,20 +126,6 @@ B<Parameters>
 
 A hashmap of arguments that are expected to meet the context criteria.
 
-Expected keys are: 
-
-=over 2
-
-=item C<field_name> (string)
-
-The name of the field being checked.
-
-=item C<field_value> (scalar)
-
-The value of the field being checked.
-
-=back
-
 =back
 
 B<Returns>
@@ -220,58 +134,8 @@ C<1> if the arguments meet the condition criteria, C<0> if they don't.
 
 =cut
 
-sub _Check {
-    die __PACKAGE__ . "::_Check is an abstract method and it's expected to be implemented by the subclass being used.\n";
-}
-
-=pod
-
-=head3 Inverted()
-
-Gets whether this condition inverts its test (i.e., true when the criteria B<isn't> met)
-
-B<Returns>
-
-C<1> when the test will return true if the criteria B<isn't> met, C<0> for the usual behaviour.
-
-=cut
-
-sub Inverted {
-    my $self = shift;
-
-    return $self->{inverted};
-}
-
-=pod
-
-=head3 SetInverted($inverted)
-
-Sets whether this condition inverts its test (i.e., true when the criteria B<isn't> met)
-
-B<Parameters>
-
-=over 1
-
-=item C<$inverted>
-
-C<1> when the test will return true if the criteria B<isn't> met, C<0> for the usual behaviour.
-
-=back
-
-=cut
-
-sub SetInverted {
-    my $self = shift;
-    my $inverted = shift;
-
-    if ($inverted) {
-        $self->{inverted} = 1;
-    }
-    else {
-        $self->{inverted} = 0;
-    }
-
-    return;
+sub Check {
+    die __PACKAGE__ . "::Check is an abstract method and it's expected to be implemented by the subclass being used.\n";
 }
 
 1;

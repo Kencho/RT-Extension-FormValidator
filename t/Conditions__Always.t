@@ -29,7 +29,6 @@ sub test_construction {
 
     isa_ok($always_condition, 'FormValidator::AbstractCondition');
     isa_ok($always_condition, 'FormValidator::Conditions::Always');
-    is($always_condition->Inverted(), 0, 'Not inverted by default');
 
     return;
 }
@@ -53,17 +52,14 @@ sub test_reflective_construction {
 
     isa_ok($always_condition, 'FormValidator::AbstractCondition');
     isa_ok($always_condition, 'FormValidator::Conditions::Always');
-    is($always_condition->Inverted(), 0, 'Not inverted by default');
 
     return;
 }
 
 sub test_checking {
     my $always_condition = FormValidator::Conditions::Always->new();
-    my $inverted_always_condition = FormValidator::Conditions::Always->new(inverted => 1);
 
     is($always_condition->Check(), 1, "Condition checking is always expected to pass");
-    is($inverted_always_condition->Check(), 0, "Inverted condition checking is never expected to pass");
 
     return;
 }
@@ -73,6 +69,7 @@ sub test_parameterless_check {
 
     try {
         $always_condition->Check();
+        pass('It\'s okay to an always-pass test without arguments')
     }
     catch {
         fail('No exception was expected when checking without an argument');

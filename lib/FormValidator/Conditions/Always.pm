@@ -62,7 +62,7 @@ sub _Init {
 
 =pod
 
-=head3 _Check(%args)
+=head3 Check(%args)
 
 Checks that the condition requirements are met.
 
@@ -72,7 +72,7 @@ Always C<1> (although it will be negated if C<Inverted>, i.e., no input meets th
 
 =cut
 
-sub _Check {
+sub Check {
     my $self = shift;
     my %args = (
         @_, 
