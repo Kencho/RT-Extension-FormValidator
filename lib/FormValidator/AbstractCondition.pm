@@ -110,9 +110,9 @@ sub _Init {
 
 =pod
 
-=head3 _Check(%args)
+=head3 Applies(%args)
 
-The verification method.
+Determines whether the rule applies to a certain set of arguments or not.
 
 B<Note>
 
@@ -124,18 +124,18 @@ B<Parameters>
 
 =item C<%args>
 
-A hashmap of arguments that are expected to meet the context criteria.
+A hashmap of arguments that are expected to meet the selection criteria.
 
 =back
 
 B<Returns>
 
-C<1> if the arguments meet the condition criteria, C<0> if they don't.
+C<1> if the arguments meet the selection criteria, C<0> if they don't.
 
 =cut
 
-sub Check {
-    die __PACKAGE__ . "::Check is an abstract method and it's expected to be implemented by the subclass being used.\n";
+sub Applies {
+    die __PACKAGE__ . "::Applies is an abstract method and it's expected to be implemented by the subclass being used.\n";
 }
 
 1;

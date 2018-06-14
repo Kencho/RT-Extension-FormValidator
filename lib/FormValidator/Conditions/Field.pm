@@ -132,9 +132,9 @@ sub _Init {
 
 =pod
 
-=head3 Check(%args)
+=head3 Applies(%args)
 
-Checks that the condition requirements are met.
+Checks that the selector requirements are met.
 
 B<Parameters>
 
@@ -142,7 +142,7 @@ B<Parameters>
 
 =item C<%args>
 
-A hashmap of arguments to test the condition against. This is specific for every subclass.
+A hashmap of arguments to test the selector against. This is specific for every subclass.
 
 Required values are:
 
@@ -160,9 +160,13 @@ B<Returns>
 
 C<0> when the field name doesn't match the criteria. C<1> when the field name matches the criteria B<and> the subclass' criteria as well.
 
+B<See>
+
+C<FieldSelector> for details on the field selection checking.
+
 =cut
 
-sub Check {
+sub Applies {
     my $self = shift;
     my %args = (
         @_, 

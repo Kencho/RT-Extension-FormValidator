@@ -60,37 +60,37 @@ sub test_reflective_construction {
     return;
 }
 
-sub test_field_name_regex_checking {
+sub test_field_name_regex_selection {
     my $field_regex_name_condition;
     my $regex;
 
     $regex = q{simple};
     $field_regex_name_condition = FormValidator::Conditions::Field->new(field_name_regex => $regex);
-    ok($field_regex_name_condition->Check(field_name => "simple"), "Matches regex");
-    ok($field_regex_name_condition->Check(field_name => "A bit less simple name"), "Matches regex");
-    ok(!$field_regex_name_condition->Check(field_name => "complex"), "Doesn't match regex");
+    ok($field_regex_name_condition->Applies(field_name => "simple"), "Matches regex");
+    ok($field_regex_name_condition->Applies(field_name => "A bit less simple name"), "Matches regex");
+    ok(!$field_regex_name_condition->Applies(field_name => "complex"), "Doesn't match regex");
     $regex = q{.*my-field\s+name with spaces};
     $field_regex_name_condition = FormValidator::Conditions::Field->new(field_name_regex => $regex);
-    ok($field_regex_name_condition->Check(field_name => "my-block-my-field\tname with spaces"), "Matches regex");
+    ok($field_regex_name_condition->Applies(field_name => "my-block-my-field\tname with spaces"), "Matches regex");
     $regex = q{^Strictly$};
     $field_regex_name_condition = FormValidator::Conditions::Field->new(field_name_regex => $regex);
-    ok($field_regex_name_condition->Check(field_name => "Strictly"), "Matches regex");
-    ok(!$field_regex_name_condition->Check(field_name => " Strictly "), "Doesn't match regex");
+    ok($field_regex_name_condition->Applies(field_name => "Strictly"), "Matches regex");
+    ok(!$field_regex_name_condition->Applies(field_name => " Strictly "), "Doesn't match regex");
 
     return;
 }
 
-sub test_field_name_checking {
+sub test_field_name_selection {
     my $field_name_condition;
     my $name;
 
     $name = q{simple};
     $field_name_condition = FormValidator::Conditions::Field->new(field_name => $name);
-    ok($field_name_condition->Check(field_name => "simple"), "Matches name");
-    ok(!$field_name_condition->Check(field_name => "Simple"), "Doesn't match casing");
+    ok($field_name_condition->Applies(field_name => "simple"), "Matches name");
+    ok(!$field_name_condition->Applies(field_name => "Simple"), "Doesn't match casing");
     $name = q{A name with Spaces, punctuation, and Öthers};
     $field_name_condition = FormValidator::Conditions::Field->new(field_name => $name);
-    ok($field_name_condition->Check(field_name => "A name with Spaces, punctuation, and Öthers"), "Matches name");
+    ok($field_name_condition->Applies(field_name => "A name with Spaces, punctuation, and Öthers"), "Matches name");
 
     return;
 }
@@ -102,9 +102,9 @@ subtest 'Construction' => sub {
     done_testing();
 };
 
-subtest 'Checking' => sub {
-    test_field_name_regex_checking();
-    test_field_name_checking();
+subtest 'Selection' => sub {
+    test_field_name_regex_selection();
+    test_field_name_selection();
 
     done_testing();
 };

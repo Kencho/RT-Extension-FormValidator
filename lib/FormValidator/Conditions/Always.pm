@@ -62,17 +62,17 @@ sub _Init {
 
 =pod
 
-=head3 Check(%args)
+=head3 Applies(%args)
 
-Checks that the condition requirements are met.
+Checks that the selector requirements are met.
 
 B<Returns>
 
-Always C<1> (although it will be negated if C<Inverted>, i.e., no input meets the criteria).
+Always C<1> (i.e., always applies).
 
 =cut
 
-sub Check {
+sub Applies {
     my $self = shift;
     my %args = (
         @_, 

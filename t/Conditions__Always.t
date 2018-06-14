@@ -59,7 +59,7 @@ sub test_reflective_construction {
 sub test_checking {
     my $always_condition = FormValidator::Conditions::Always->new();
 
-    is($always_condition->Check(), 1, "Condition checking is always expected to pass");
+    is($always_condition->Applies(), 1, "Condition checking is always expected to pass");
 
     return;
 }
@@ -68,7 +68,7 @@ sub test_parameterless_check {
     my $always_condition = FormValidator::Conditions::Always->new();
 
     try {
-        $always_condition->Check();
+        $always_condition->Applies();
         pass('It\'s okay to an always-pass test without arguments')
     }
     catch {
