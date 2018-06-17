@@ -66,16 +66,16 @@ sub test_field_name_regex_selection {
 
     $regex = q{simple};
     $field_regex_name_rule_validator = FormValidator::RuleValidators::SingleField->new(field_name_regex => $regex);
-    ok($field_regex_name_rule_validator->Applies(field_name => "simple"), "Matches regex");
-    ok($field_regex_name_rule_validator->Applies(field_name => "A bit less simple name"), "Matches regex");
-    ok(!$field_regex_name_rule_validator->Applies(field_name => "complex"), "Doesn't match regex");
+    ok($field_regex_name_rule_validator->_Applies(field_name => "simple"), "Matches regex");
+    ok($field_regex_name_rule_validator->_Applies(field_name => "A bit less simple name"), "Matches regex");
+    ok(!$field_regex_name_rule_validator->_Applies(field_name => "complex"), "Doesn't match regex");
     $regex = q{.*my-field\s+name with spaces};
     $field_regex_name_rule_validator = FormValidator::RuleValidators::SingleField->new(field_name_regex => $regex);
-    ok($field_regex_name_rule_validator->Applies(field_name => "my-block-my-field\tname with spaces"), "Matches regex");
+    ok($field_regex_name_rule_validator->_Applies(field_name => "my-block-my-field\tname with spaces"), "Matches regex");
     $regex = q{^Strictly$};
     $field_regex_name_rule_validator = FormValidator::RuleValidators::SingleField->new(field_name_regex => $regex);
-    ok($field_regex_name_rule_validator->Applies(field_name => "Strictly"), "Matches regex");
-    ok(!$field_regex_name_rule_validator->Applies(field_name => " Strictly "), "Doesn't match regex");
+    ok($field_regex_name_rule_validator->_Applies(field_name => "Strictly"), "Matches regex");
+    ok(!$field_regex_name_rule_validator->_Applies(field_name => " Strictly "), "Doesn't match regex");
 
     return;
 }
@@ -86,11 +86,11 @@ sub test_field_name_selection {
 
     $name = q{simple};
     $field_name_rule_validator = FormValidator::RuleValidators::SingleField->new(field_name => $name);
-    ok($field_name_rule_validator->Applies(field_name => "simple"), "Matches name");
-    ok(!$field_name_rule_validator->Applies(field_name => "Simple"), "Doesn't match casing");
+    ok($field_name_rule_validator->_Applies(field_name => "simple"), "Matches name");
+    ok(!$field_name_rule_validator->_Applies(field_name => "Simple"), "Doesn't match casing");
     $name = q{A name with Spaces, punctuation, and Öthers};
     $field_name_rule_validator = FormValidator::RuleValidators::SingleField->new(field_name => $name);
-    ok($field_name_rule_validator->Applies(field_name => "A name with Spaces, punctuation, and Öthers"), "Matches name");
+    ok($field_name_rule_validator->_Applies(field_name => "A name with Spaces, punctuation, and Öthers"), "Matches name");
 
     return;
 }

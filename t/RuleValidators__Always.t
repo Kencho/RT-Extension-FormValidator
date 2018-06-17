@@ -59,7 +59,7 @@ sub test_reflective_construction {
 sub test_checking {
     my $always_rule_validator = FormValidator::RuleValidators::Always->new();
 
-    is($always_rule_validator->Applies(), 1, "Rule application is always expected to pass");
+    is($always_rule_validator->_Applies(), 1, "Rule application is always expected to pass");
 
     return;
 }
@@ -68,7 +68,7 @@ sub test_parameterless_check {
     my $always_rule_validator = FormValidator::RuleValidators::Always->new();
 
     try {
-        $always_rule_validator->Applies();
+        $always_rule_validator->_Applies();
         pass('It\'s okay to an always-pass test without arguments')
     }
     catch {

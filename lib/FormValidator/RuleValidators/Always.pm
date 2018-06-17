@@ -78,9 +78,13 @@ sub Validate {
 
 =pod
 
-=head3 Applies(%args)
+=head3 _Applies(%args)
 
 Checks that the selector requirements are met.
+
+B<Note>
+
+Internal function. Do not use from outside of this module.
 
 B<Returns>
 
@@ -88,7 +92,7 @@ Always C<1> (i.e., always applies).
 
 =cut
 
-sub Applies {
+sub _Applies {
     my $self = shift;
     my %args = (
         @_, 

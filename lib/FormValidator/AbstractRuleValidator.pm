@@ -152,13 +152,17 @@ sub Validate {
 
 =pod
 
-=head3 Applies(%args)
+=head3 _Applies(%args)
 
 Determines whether the rule applies to a certain set of arguments or not.
 
 B<Note>
 
 This is an abstract method and must be implemented by its subclasses.
+
+B<Note>
+
+Internal function. Do not use from outside of this module.
 
 B<Parameters>
 
@@ -176,8 +180,8 @@ C<1> if the arguments meet the selection criteria, C<0> if they don't.
 
 =cut
 
-sub Applies {
-    die __PACKAGE__ . "::Applies is an abstract method and it's expected to be implemented by the subclass being used.\n";
+sub _Applies {
+    die __PACKAGE__ . "::_Applies is an abstract method and it's expected to be implemented by the subclass being used.\n";
 }
 
 1;
