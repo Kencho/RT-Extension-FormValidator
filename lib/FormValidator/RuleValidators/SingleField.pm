@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-FormValidator::RuleValidators::Field
+FormValidator::RuleValidators::SingleField
 
 A base class for field-based rule validators.
 
@@ -10,7 +10,7 @@ A subclass of C<FormValidator::AbstractContext>
 
 =cut
 
-package FormValidator::RuleValidators::Field;
+package FormValidator::RuleValidators::SingleField;
 
 use strict;
 use warnings;
