@@ -110,6 +110,48 @@ sub _Init {
 
 =pod
 
+=head3 Validate(%form_data)
+
+Validates the form data using this rule.
+
+B<Note>
+
+This is an abstract method and must be implemented by its subclasses.
+
+B<Parameters>
+
+=over 1
+
+=item C<%form_data> (hashmap)
+
+The whole form data as a hashmap.
+
+=back
+
+B<Returns>
+
+A pair of values:
+
+=over 1
+
+=item C<$ok> (boolean)
+
+Whether the validation passed (C<1>) or not (C<0>).
+
+=item C<@messages> (list of strings)
+
+A list of reasons why, in case the validation didn't pass.
+
+=back
+
+=cut
+
+sub Validate {
+    die __PACKAGE__ . "::Validate is an abstract method and it's expected to be implemented by the subclass being used.\n";
+}
+
+=pod
+
 =head3 Applies(%args)
 
 Determines whether the rule applies to a certain set of arguments or not.

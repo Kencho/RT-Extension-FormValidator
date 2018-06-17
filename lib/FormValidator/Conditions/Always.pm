@@ -62,6 +62,22 @@ sub _Init {
 
 =pod
 
+=head3 Validate(%form_data)
+
+Validates the form data using this "always pass" rule.
+
+B<See>
+
+C<FormValidator::AbstractCondition::Validate> for additional details on this function.
+
+=cut
+
+sub Validate {
+    return (1);
+}
+
+=pod
+
 =head3 Applies(%args)
 
 Checks that the selector requirements are met.

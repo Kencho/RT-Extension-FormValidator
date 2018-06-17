@@ -132,6 +132,26 @@ sub _Init {
 
 =pod
 
+=head3 Validate(%form_data)
+
+Validates the form data using this field-based rule.
+
+B<Note>
+
+This is an abstract method and must be implemented by its subclasses.
+
+B<See>
+
+C<FormValidator::AbstractCondition::Validate> for additional details on this function.
+
+=cut
+
+sub Validate {
+    die __PACKAGE__ . "::Validate is an abstract method and it's expected to be implemented by the subclass being used.\n";
+}
+
+=pod
+
 =head3 Applies(%args)
 
 Checks that the selector requirements are met.
