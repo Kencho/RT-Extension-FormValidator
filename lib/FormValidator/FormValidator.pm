@@ -196,7 +196,7 @@ sub _ValidateWithRule {
 
     my $rule_validator = $rule->{rule_validator};
     foreach my $field_name (keys %{$form_data}) {
-        if ($rule_validator->Check(
+        if ($rule_validator->Applies(
             field_name => $field_name, 
         )) {
             RT::Logger->debug(__PACKAGE__ . "::_ValidateWithRule: Rule validated for field '$field_name' with value '" . $form_data->{$field_name} . "'. Rule: " . Data::Dumper::Dumper($rule));
