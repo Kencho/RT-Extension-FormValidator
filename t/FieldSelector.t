@@ -101,6 +101,54 @@ sub test_null_checking {
     return;
 }
 
+sub test_filtering {
+    my %original_form_data = (
+        'lorem' => 'ipsum', 
+        'dolor' => 'sit amet', 
+        'consectetur' => 'adipiscing elit.', 
+        'item1' => 0, 
+        'item2' => undef, 
+        'item3' => 'value', 
+        'not-an-item' => 'not-a-value', 
+    );
+    my %expected_form_data;
+    my %gotten_form_data;
+    my $field_selector;
+
+    $field_selector = FormValidator::FieldSelector->new(field_name_regex => '^item.*$');
+    %expected_form_data = (
+        'item1' => 0, 
+        'item2' => undef, 
+        'item3' => 'value', 
+    );
+    %gotten_form_data = $field_selector->Filter(%original_form_data);
+    is_deeply(\%gotten_form_data, \%expected_form_data, "Filtered data matches the expectations");
+
+    $field_selector = FormValidator::FieldSelector->new(field_name_regex => '^NOT-PRESENT$');
+    %expected_form_data = ();
+    %gotten_form_data = $field_selector->Filter(%original_form_data);
+    is_deeply(\%gotten_form_data, \%expected_form_data, "Filtered data matches the expectations");
+
+    $field_selector = FormValidator::FieldSelector->new(field_name => 'lorem');
+    %expected_form_data = (
+        'lorem' => 'ipsum', 
+    );
+    %gotten_form_data = $field_selector->Filter(%original_form_data);
+    is_deeply(\%gotten_form_data, \%expected_form_data, "Filtered data matches the expectations");
+
+    $field_selector = FormValidator::FieldSelector->new(field_name => 'NOT-PRESENT');
+    %expected_form_data = ();
+    %gotten_form_data = $field_selector->Filter(%original_form_data);
+    is_deeply(\%gotten_form_data, \%expected_form_data, "Filtered data matches the expectations");
+
+    $field_selector = FormValidator::FieldSelector->new();
+    %expected_form_data = ();
+    %gotten_form_data = $field_selector->Filter(%original_form_data);
+    is_deeply(\%gotten_form_data, \%expected_form_data, "Filtered data matches the expectations");
+
+    return;
+}
+
 subtest 'Construction' => sub {
     test_construction();
     test_reflective_construction();
@@ -112,6 +160,12 @@ subtest 'Checking' => sub {
     test_field_name_regex_checking();
     test_field_name_checking();
     test_null_checking();
+
+    done_testing();
+};
+
+subtest 'Filtering' => sub {
+    test_filtering();
 
     done_testing();
 };

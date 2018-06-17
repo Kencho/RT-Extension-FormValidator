@@ -201,6 +201,84 @@ sub SetFieldName {
 
 =pod
 
+=head3 Filter(%form_data)
+
+Filters the form data so only the fields specified by this selector remain.
+
+B<Parameters>
+
+=over 1
+
+=item C<%form_data> (hashmap)
+
+The form data to filter.
+
+=back
+
+B<Returns>
+
+The filtered form data.
+
+=cut
+
+sub Filter {
+    my $self = shift;
+    my %form_data = (
+        @_,
+    );
+
+    if (defined $self->FieldNameRegex()) {
+        return $self->_FilterByNameRegex(%form_data);
+    }
+    if (defined $self->FieldName()) {
+        if (exists $form_data{$self->FieldName()}) {
+            return ($self->FieldName(), $form_data{$self->FieldName()});
+        }
+        else {
+            return;
+        }
+    }
+
+    return;
+}
+
+=pod
+
+=head3 _FilterByNameRegex(%form_data)
+
+Filters the form data using this instance's name regex.
+
+B<Parameters>
+
+=over 1
+
+=item C<%form_data> (hashmap)
+
+The form data to filter.
+
+=back
+
+B<Returns>
+
+The filtered form data.
+
+=cut
+
+sub _FilterByNameRegex {
+    my $self = shift;
+    my %form_data = (
+        @_,
+    );
+
+    my %filtered_data;
+    my @filtered_keys = grep {$self->_MatchesNameRegex($_)} keys %form_data;
+    @filtered_data{@filtered_keys} = @form_data{@filtered_keys};
+
+    return %filtered_data;
+}
+
+=pod
+
 =head3 Matches($field_name)
 
 Tests a field's name against this selector.
