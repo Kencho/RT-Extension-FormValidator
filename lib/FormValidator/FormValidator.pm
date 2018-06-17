@@ -20,7 +20,7 @@ use Try::Tiny;
 use RT::Config;
 
 use FormValidator::AbstractContext;
-use FormValidator::AbstractCondition;
+use FormValidator::AbstractRuleValidator;
 
 =pod
 
@@ -194,12 +194,12 @@ sub _ValidateWithRule {
 
     RT::Logger->debug(__PACKAGE__ . "::_ValidateWithRule: Rule applies: " . Data::Dumper::Dumper($rule));
 
-    my $condition = $rule->{condition};
+    my $rule_validator = $rule->{rule_validator};
     foreach my $field_name (keys %{$form_data}) {
-        if ($condition->Check(
+        if ($rule_validator->Check(
             field_name => $field_name, 
         )) {
-            RT::Logger->debug(__PACKAGE__ . "::_ValidateWithRule: Rule matches condition for field '$field_name' with value '" . $form_data->{$field_name} . "'. Rule: " . Data::Dumper::Dumper($rule));
+            RT::Logger->debug(__PACKAGE__ . "::_ValidateWithRule: Rule validated for field '$field_name' with value '" . $form_data->{$field_name} . "'. Rule: " . Data::Dumper::Dumper($rule));
             # TODO: Implement the actual validation logic.
         }
     }
@@ -332,12 +332,12 @@ sub _LoadRulesFromFile {
             }
             $rule{contexts} = \@contexts;
 
-            # Condition
-            if (exists $rule_data_ref->{condition}) {
-                $rule{condition} = $self->_BuildConditionFromData($rule_data_ref->{condition});
+            # Rule validator
+            if (exists $rule_data_ref->{rule_validator}) {
+                $rule{rule_validator} = $self->_BuildRuleValidatorFromData($rule_data_ref->{rule_validator});
             }
             else {
-                $rule{condition} = FormValidator::AbstractCondition::Build('FormValidator::Conditions::Always');
+                $rule{rule_validator} = FormValidator::AbstractRuleValidator::Build('FormValidator::RuleValidators::Always');
             }
 
             push @rules, {%rule};
@@ -437,9 +437,9 @@ sub _BuildContextFromData {
 
 =pod
 
-=head3 _BuildConditionFromData($condition_data_ref)
+=head3 _BuildRuleValidatorFromData($rule_validator_data_ref)
 
-Builds a condition object from data (e.g., loaded from the configuration files).
+Builds a rule validator object from data (e.g., loaded from the configuration files).
 
 B<Note>
 
@@ -449,27 +449,27 @@ B<Parameters>
 
 =over 1
 
-=item C<$condition_data_ref> (hashref)
+=item C<$rule validator_data_ref> (hashref)
 
-The data to build a single condition.
+The data to build a single rule validator.
 
 =back
 
 B<Returns>
 
-A condition object created using the data.
+A rule validator object created using the data.
 
 =cut
 
-sub _BuildConditionFromData {
+sub _BuildRuleValidatorFromData {
     my $self = shift;
-    my $condition_data_ref = shift;
+    my $rule_validator_data_ref = shift;
 
-    if (!exists $condition_data_ref->{class}) {
-        die "A 'class' attribute is required to instantiate a condition.\n" . Data::Dumper::Dumper($condition_data_ref) . "\n";
+    if (!exists $rule_validator_data_ref->{class}) {
+        die "A 'class' attribute is required to instantiate a rule validator.\n" . Data::Dumper::Dumper($rule_validator_data_ref) . "\n";
     }
 
-    return FormValidator::AbstractCondition::Build($condition_data_ref->{class}, %{$condition_data_ref->{args}});
+    return FormValidator::AbstractRuleValidator::Build($rule_validator_data_ref->{class}, %{$rule_validator_data_ref->{args}});
 }
 
 1;

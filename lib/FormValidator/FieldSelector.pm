@@ -75,7 +75,7 @@ B<Parameters>
 
 =item C<%args>
 
-A hashmap of arguments for the condition.
+A hashmap of arguments for the rule validator.
 
 Possibly used values are:
 

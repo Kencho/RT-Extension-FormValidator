@@ -2,20 +2,20 @@
 
 =head1 NAME
 
-FormValidator::Conditions::Always
+FormValidator::RuleValidators::Always
 
-A simple condition class that always passes.
+A simple rule validator class that always passes.
 
 A subclass of C<FormValidator::AbstractContext>
 
 =cut
 
-package FormValidator::Conditions::Always;
+package FormValidator::RuleValidators::Always;
 
 use strict;
 use warnings;
 
-use parent 'FormValidator::AbstractCondition';
+use parent 'FormValidator::AbstractRuleValidator';
 
 =pod
 
@@ -35,7 +35,7 @@ B<Parameters>
 
 =item C<%args>
 
-A hashmap of arguments for the condition. No values are expected here, but may be used by a superclass.
+A hashmap of arguments for the rule validator. No values are expected here, but may be used by a superclass.
 
 =back
 
@@ -68,7 +68,7 @@ Validates the form data using this "always pass" rule.
 
 B<See>
 
-C<FormValidator::AbstractCondition::Validate> for additional details on this function.
+C<FormValidator::AbstractRuleValidator::Validate> for additional details on this function.
 
 =cut
 

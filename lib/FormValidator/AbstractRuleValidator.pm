@@ -2,13 +2,13 @@
 
 =head1 NAME
 
-FormValidator::AbstractCondition
+FormValidator::AbstractRuleValidator
 
-The base class for every condition.
+The base class for every rule validator.
 
 =cut
 
-package FormValidator::AbstractCondition;
+package FormValidator::AbstractRuleValidator;
 
 use strict;
 use warnings;
@@ -25,11 +25,11 @@ use Module::Load;
 
 =head3 I<static> Build($class, %args)
 
-Creates a new condition using reflection.
+Creates a new rule validator using reflection.
 
 B<Note>
 
-This is an static method. Call it using the class itself, not an instance (i.e., C<my $condition = FormValidator::AbstractCondition::Build('My::Condition::Class', {field =E<gt> 'my-field-id'});>)
+This is an static method. Call it using the class itself, not an instance (i.e., C<my $rule_validator = FormValidator::AbstractRuleValidator::Build('My::RuleValidator::Class', {field =E<gt> 'my-field-id'});>)
 
 B<Parameters>
 
@@ -41,7 +41,7 @@ The fully qualified name of the class to instantiate.
 
 =item C<%args>
 
-The arguments to pass to the concrete condition class constructor.
+The arguments to pass to the concrete rule validator class constructor.
 
 =back
 
@@ -53,12 +53,12 @@ sub Build {
 
     load($class);
 
-    my $condition = $class->new(%args);
-    if (!$condition->isa(__PACKAGE__)) {
+    my $rule_validator = $class->new(%args);
+    if (!$rule_validator->isa(__PACKAGE__)) {
         die "The given class $class isn't a subclass of " . __PACKAGE__ . "\n";
     }
 
-    return $condition;
+    return $rule_validator;
 }
 
 =pod
@@ -93,7 +93,7 @@ B<Parameters>
 
 =item C<%args>
 
-A hashmap of arguments for the condition. This is specific for every subclass.
+A hashmap of arguments for the rule validator. This is specific for every subclass.
 
 =back
 

@@ -2,20 +2,20 @@
 
 =head1 NAME
 
-FormValidator::Conditions::Field
+FormValidator::RuleValidators::Field
 
-A base class for field-based conditions.
+A base class for field-based rule validators.
 
 A subclass of C<FormValidator::AbstractContext>
 
 =cut
 
-package FormValidator::Conditions::Field;
+package FormValidator::RuleValidators::Field;
 
 use strict;
 use warnings;
 
-use parent 'FormValidator::AbstractCondition';
+use parent 'FormValidator::AbstractRuleValidator';
 
 use FormValidator::FieldSelector;
 
@@ -37,7 +37,7 @@ B<Parameters>
 
 =item C<%args>
 
-A hashmap of arguments for the condition.
+A hashmap of arguments for the rule validator.
 
 Possibly used values are:
 
@@ -81,7 +81,7 @@ B<Parameters>
 
 =item C<%args>
 
-A hashmap of arguments for the condition.
+A hashmap of arguments for the rule validator.
 
 Possibly used values are:
 
@@ -142,7 +142,7 @@ This is an abstract method and must be implemented by its subclasses.
 
 B<See>
 
-C<FormValidator::AbstractCondition::Validate> for additional details on this function.
+C<FormValidator::AbstractRuleValidator::Validate> for additional details on this function.
 
 =cut
 
