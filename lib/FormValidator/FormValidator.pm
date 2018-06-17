@@ -104,21 +104,22 @@ sub Validate {
     my $queue_id = shift;
     my $form_data = shift;
 
-    my $result = 1;
+    my $ok = 1;
     my @messages;
 
     if (!defined $self->{ruleset}) {
-        return $result;
+        return $ok;
     }
 
     foreach my $rule (@{$self->{ruleset}}) {
-        my ($ok, $message) = $self->_ValidateWithRules($rule, $action, $queue_id, $form_data);
-        if (!$ok) {
-            push @messages, $message;
+        my ($rules_ok, @rules_messages) = $self->_ValidateWithRules($rule, $action, $queue_id, $form_data);
+        if (!$rules_ok) {
+            $ok = 0;
+            push @messages, @rules_messages;
         }
     }
 
-    return ($result, @messages);
+    return ($ok, @messages);
 }
 
 =pod
@@ -174,8 +175,8 @@ sub _ValidateWithRules {
     my $queue_id = shift;
     my $form_data = shift;
 
-    my $result = 1;
-    my $message;
+    my $ok = 1;
+    my @messages;
 
     my $valid_context = 0;
     my @contexts = @{$rule->{contexts}};
@@ -192,19 +193,17 @@ sub _ValidateWithRules {
         return (1);
     }
 
-    RT::Logger->debug(__PACKAGE__ . "::_ValidateWithRules: Rule applies: " . Data::Dumper::Dumper($rule));
+    RT::Logger->debug(__PACKAGE__ . "::_ValidateWithRules: Context is valid: " . Data::Dumper::Dumper($rule));
 
-    my $rule_validator = $rule->{rule_validator};
-    foreach my $field_name (keys %{$form_data}) {
-        if ($rule_validator->Applies(
-            field_name => $field_name, 
-        )) {
-            RT::Logger->debug(__PACKAGE__ . "::_ValidateWithRules: Rule validated for field '$field_name' with value '" . $form_data->{$field_name} . "'. Rule: " . Data::Dumper::Dumper($rule));
-            # TODO: Implement the actual validation logic.
+    foreach my $rule_validator (@{$rule->{rule_validators}}) {
+        my ($rule_ok, @rule_messages) = $rule_validator->Validate(%{$form_data});
+        if (!$rule_ok) {
+            $ok = 0;
+            push @messages, @rule_messages;
         }
     }
 
-    return ($result, $message);
+    return ($ok, @messages);
 }
 
 =pod
@@ -332,13 +331,12 @@ sub _LoadRulesFromFile {
             }
             $rule{contexts} = \@contexts;
 
-            # Rule validator
-            if (exists $rule_data_ref->{rule_validator}) {
-                $rule{rule_validator} = $self->_BuildRuleValidatorFromData($rule_data_ref->{rule_validator});
+            # Rule validators
+            my @rule_validators;
+            if (exists $rule_data_ref->{rule_validators}) {
+                push @rule_validators, $self->_BuildRuleValidatorsFromData($rule_data_ref->{rule_validators});
             }
-            else {
-                $rule{rule_validator} = FormValidator::AbstractRuleValidator::Build('FormValidator::RuleValidators::Always');
-            }
+            $rule{rule_validators} = \@rule_validators;
 
             push @rules, {%rule};
         }
@@ -433,6 +431,53 @@ sub _BuildContextFromData {
     }
 
     return FormValidator::AbstractContext::Build($context_data_ref->{class}, %{$context_data_ref->{args}});
+}
+
+=pod
+
+=head3 _BuildRuleValidatorsFromData($rule_validators_data_ref)
+
+Builds an array of rule validator objects from data (e.g., loaded from the configuration files).
+
+B<Note>
+
+Internal function. Do not use from outside of this module.
+
+B<Parameters>
+
+=over 1
+
+=item C<$rule_validators_data_ref> (arrayref|hashref)
+
+The data to build one (i.e. hashref) or several (i.e. arrayref) rule validators.
+
+=back
+
+B<Returns>
+
+An array of rule validators created using the data.
+
+=cut
+
+sub _BuildRuleValidatorsFromData {
+    my $self = shift;
+    my $rule_validators_data_ref = shift;
+
+    my @rule_validators;
+
+    my @rule_validators_data;
+    if (ref $rule_validators_data_ref eq 'ARRAY') {
+        @rule_validators_data = @{$rule_validators_data_ref};
+    }
+    else {
+        @rule_validators_data = ($rule_validators_data_ref);
+    }
+
+    foreach my $rule_validator_data_ref (@rule_validators_data) {
+        push @rule_validators, $self->_BuildRuleValidatorFromData($rule_validator_data_ref);
+    }
+
+    return @rule_validators;
 }
 
 =pod
