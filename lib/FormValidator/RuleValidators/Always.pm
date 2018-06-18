@@ -6,7 +6,7 @@ FormValidator::RuleValidators::Always
 
 A simple rule validator class that always passes.
 
-A subclass of C<FormValidator::AbstractContext>
+A subclass of C<FormValidator::AbstractRuleValidator>
 
 =cut
 
