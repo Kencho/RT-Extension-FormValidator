@@ -13,10 +13,10 @@ require_ok('FormValidator::RuleValidators::SingleField');
 sub test_construction {
     try {
         FormValidator::RuleValidators::SingleField->new();
-        fail('An exception was expected when trying to construct without either field_name or field_name_regex');
+        fail('An exception was expected when trying to construct without a field_selector specification');
     }
     catch {
-        pass('Exception received when trying to construct without either field_name or field_name_regex');
+        pass('Exception received when trying to construct without a field_selector specification');
     };
 
     try {
@@ -38,10 +38,10 @@ sub test_construction {
 sub test_reflective_construction {
     try {
         FormValidator::AbstractRuleValidator::Build('FormValidator::RuleValidators::SingleField');
-        fail('An exception was expected when trying to construct without either field_name or field_name_regex');
+        fail('An exception was expected when trying to construct without a field_selector specification');
     }
     catch {
-        pass('Exception received when trying to construct without either field_name or field_name_regex');
+        pass('Exception received when trying to construct without a field_selector specification');
     };
 
     try {
