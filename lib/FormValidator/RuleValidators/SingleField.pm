@@ -39,17 +39,13 @@ B<Parameters>
 
 A hashmap of arguments for the rule validator.
 
-Possibly used values are:
+Required values are:
 
 =over 2
 
-=item C<field_name_regex> (regex string)
+=item C<field_selector> (hashref)
 
-If defined, will set the regex used against the field name to meet the criteria.
-
-=item C<field_name> (string)
-
-If defined, will set the expected field name to meet the criteria (if the C<field_name_regex> doesn't match first).
+The specification (i.e., arguments dictionary) to instantiate a C<FormValidator::FieldSelector> object used to select the fields to apply this rule on.
 
 =back
 
@@ -83,21 +79,15 @@ B<Parameters>
 
 A hashmap of arguments for the rule validator.
 
-Possibly used values are:
+Required values are:
 
 =over 2
 
-=item C<field_name_regex> (regex string)
+=item C<field_selector> (hashref)
 
-If defined, will set the regex used against the field name to meet the criteria.
-
-=item C<field_name> (string)
-
-If defined, will set the expected field name to meet the criteria (if the C<field_name_regex> doesn't match first).
+The specification (i.e., arguments dictionary) to instantiate a C<FormValidator::FieldSelector> object used to select the fields to apply this rule on.
 
 =back
-
-At least one of C<field_name_regex> or C<field_name> is required.
 
 =back
 
@@ -114,18 +104,17 @@ B<See also>
 sub _Init {
     my $self = shift;
     my %args = (
-        field_name_regex => undef, 
-        field_name => undef, 
+        field_selector => undef, 
         @_, 
     );
 
-    if (!defined $args{field_name_regex} && !defined $args{field_name}) {
-        die "At least a value for field_name_regex or field_name is required.\n";
+    if (!defined $args{field_selector}) {
+        die "An specification for the field selector is required.\n";
     }
 
     $self->SUPER::_Init(%args);
 
-    $self->{field_selector} = FormValidator::FieldSelector->new(%args);
+    $self->{field_selector} = FormValidator::FieldSelector::Build($args{field_selector});
 
     return;
 }
