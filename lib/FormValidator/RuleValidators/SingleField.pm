@@ -18,6 +18,7 @@ use warnings;
 use parent 'FormValidator::AbstractRuleValidator';
 
 use FormValidator::FieldSelector;
+use FormValidator::AbstractFieldValueValidator;
 
 =pod
 
@@ -87,6 +88,10 @@ Required values are:
 
 The specification (i.e., arguments dictionary) to instantiate a C<FormValidator::FieldSelector> object used to select the fields to apply this rule on.
 
+=item C<value_validators> (listref of hashrefs)
+
+The specification (i.e., arguments dictionary) to instantiate a list of C<FormValidator::AbstractFieldValueValidator> object used to validate the fields this rule applies to.
+
 =back
 
 =back
@@ -105,6 +110,7 @@ sub _Init {
     my $self = shift;
     my %args = (
         field_selector => undef, 
+        value_validators => undef, 
         @_, 
     );
 
@@ -115,6 +121,14 @@ sub _Init {
     $self->SUPER::_Init(%args);
 
     $self->{field_selector} = FormValidator::FieldSelector::Build($args{field_selector});
+    my @value_validators;
+    if (defined $args{value_validators}) {
+        foreach my $value_validator_spec (@{$args{value_validators}}) {
+            my $value_validator = FormValidator::AbstractFieldValueValidator::Build($value_validator_spec->{class}, %{$value_validator_spec->{args}});
+            push @value_validators, $value_validator;
+        }
+    }
+    $self->{value_validators} = \@value_validators;
 
     return;
 }
@@ -125,10 +139,6 @@ sub _Init {
 
 Validates the form data using this field-based rule.
 
-B<Note>
-
-This is an abstract method and must be implemented by its subclasses.
-
 B<See>
 
 C<FormValidator::AbstractRuleValidator::Validate> for additional details on this function.
@@ -136,7 +146,25 @@ C<FormValidator::AbstractRuleValidator::Validate> for additional details on this
 =cut
 
 sub Validate {
-    die __PACKAGE__ . "::Validate is an abstract method and it's expected to be implemented by the subclass being used.\n";
+    my $self = shift;
+    my %form_data = (
+        @_, 
+    );
+
+    my $ok = 1;
+    my @messages;
+    my %filtered_form_data = $self->{field_selector}->Filter(%form_data);
+    foreach my $field_name (keys %filtered_form_data) {
+        foreach my $field_value_validator (@{$self->{value_validators}}) {
+            my ($field_ok, @field_messages) = $field_value_validator->Validate($filtered_form_data{$field_name}, $field_name);
+            if (!$field_ok) {
+                $ok = 0;
+            }
+            push @messages, @field_messages;
+        }
+    }
+
+    return ($ok, @messages);
 }
 
 =pod
